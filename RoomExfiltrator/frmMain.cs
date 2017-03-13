@@ -10,6 +10,7 @@ using Sulakore.Communication;
 using System.IO;
 using RoomExfiltrator.Json;
 using System.Reflection;
+using System.Text;
 
 namespace RoomExfiltrator
 {
@@ -234,6 +235,8 @@ namespace RoomExfiltrator
 
                 Tuple<string, int, string> floorItem = floorData.Where(t => t.Item2 == baseId).First();
 
+                
+
                 furniItem.Id = furniId;
                 furniItem.BaseId = baseId;
                 furniItem.X = x;
@@ -249,6 +252,11 @@ namespace RoomExfiltrator
 
                 // this should be a mask, but w/e, we don't care about the value (see above)
                 bool isLimited = (e.Packet.ReadInteger() - 256 > -1);
+
+                if (floorItem.Item3 == "furniture_high_score")
+                {
+                    LogText(e.Packet.ToString(), true);
+                }
 
                 switch (floorItem.Item3)
                 {
@@ -271,7 +279,28 @@ namespace RoomExfiltrator
                     case "furniture_pushable":
                     case "furniture_one_way_door":
                     case "furniture_jukebox":
+                    case "furniture_floor_hole":
+                    case "furniture_dice":
+                    case "furniture_hockey_score":
+                    case "furniture_fireworks":
+                    case "furniture_soundblock":
                         furniItem.Extradata = e.Packet.ReadString(); // extraData
+                        break;
+
+                    case "furniture_high_score":
+                        e.Packet.ReadString(); // "1"
+                        e.Packet.ReadInteger(); // 1
+                        e.Packet.ReadInteger(); // 0
+                        var count2 = e.Packet.ReadInteger(); // teams count
+                        for (var i2 = 0; i2 < count2; i2++)
+                        {
+                            var score = e.Packet.ReadInteger(); // score?
+                            var countNames = e.Packet.ReadInteger(); // names count
+                            for (var i3 = 0; i3 < countNames; i3++)
+                            {
+                                var habboName = e.Packet.ReadString(); // name
+                            }
+                        }
                         break;
 
                     case "furniture_present":
