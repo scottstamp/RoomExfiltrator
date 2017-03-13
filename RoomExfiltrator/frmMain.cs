@@ -20,15 +20,21 @@ namespace RoomExfiltrator
     public partial class frmMain : ExtensionForm
     {
         private Dictionary<int, string> interactionTypes = new Dictionary<int, string>();
+        private List<Tuple<string, int, string>> furniData = new List<Tuple<string, int, string>>();
+        public override bool IsRemoteModule => true;
 
         public frmMain()
         {
             InitializeComponent();
-            var lines = File.ReadAllLines(@"C:\interactiontypes.txt");
+            var lines = File.ReadAllLines(@"C:\users\scott\documents\interactiontypes.txt");
             foreach (var line in lines)
             {
+                var spriteName = line.Split(':')[0];
                 var baseId = int.Parse(line.Split(':')[1]);
                 var interactionType = line.Split(':')[2];
+
+                Tuple<string, int, string> floorItem = new Tuple<string, int, string>(spriteName, baseId, interactionType);
+                furniData.Add(floorItem);
 
                 if (!interactionTypes.ContainsKey(baseId))
                     interactionTypes.Add(int.Parse(line.Split(':')[1]), line.Split(':')[2]);
@@ -37,7 +43,7 @@ namespace RoomExfiltrator
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            Triggers.InAttach(3774, ParseFloorItems);
+            Triggers.InAttach(448, ParseFloorItems);
             //foreach (var interactionType in interactionTypes)
             //LogText($"{interactionType.Key}:{interactionType.Value}";
         }
@@ -62,20 +68,18 @@ namespace RoomExfiltrator
                     var furniItem = new FurniItem();
 
                     var furniId = e.Packet.ReadInteger();
-                    LogText($"Furni ID: {furniId}");
                     var baseId = e.Packet.ReadInteger();
-                    LogText($"Base ID: {baseId}");
                     var x = e.Packet.ReadInteger();
-                    LogText($"X: {x}");
                     var y = e.Packet.ReadInteger();
-                    LogText($"Y: {y}");
                     var rot = e.Packet.ReadInteger();
-                    LogText($"Rot: {rot}");
                     var height = e.Packet.ReadString();
-                    LogText($"Height: {height}");
                     var stackheight = e.Packet.ReadString();
-                    LogText($"Stack Height: {stackheight}");
 
+                    //LogText(baseId);
+
+                    Tuple<string,int,string> floorItem = furniData.Where(t => t.Item2 == baseId).First();
+
+                    furniItem.id = furniId;
                     furniItem.baseId = baseId;
                     furniItem.x = x;
                     furniItem.y = y;
@@ -83,10 +87,11 @@ namespace RoomExfiltrator
                     furniItem.height = height;
                     furniItem.ownerId = txtOwnerId.Text;
                     furniItem.roomId = txtRoomId.Text;
+                    furniItem.interactionType = floorItem.Item3;
 
                     //LogText($"INSERT INTO items (user_id, room_id, item_id, x, y, z, rot) VALUES ('8', '90', '{baseId}', '{x}', '{y}', '{height}', '{rot}');");
 
-                    LogText($"Interaction Type: {interactionTypes[baseId]}");
+                    //LogText($"Interaction Type: {floorItem.Item3}");
 
                     e.Packet.ReadInteger();
                     e.Packet.ReadInteger();
@@ -95,7 +100,7 @@ namespace RoomExfiltrator
                     {
                         case "furniture_background_color":
                             var colorsCount = e.Packet.ReadInteger();
-                            for (var i2 = 0; i2 < colorsCount; i2++) LogText(e.Packet.ReadInteger());
+                            for (var i2 = 0; i2 < colorsCount; i2++) furniItem.extradata += $"{e.Packet.ReadInteger()}:";
                             break;
                         case "furniture_change_state_when_step_on":
                         case "furniture_basic":
@@ -103,7 +108,13 @@ namespace RoomExfiltrator
                         case "furniture_multistate":
                         case "furniture_multiheight":
                         case "furniture_internal_link":
+                        case "furniture_es":
+                        case "furniture_score":
+                        case "furniture_purchasable_clothing":
+                        case "furniture_counter_clock":
                             furniItem.extradata = e.Packet.ReadString(); // extraData
+                            if (furniItem.baseId == 4942)
+                                e.Packet.ReadInteger(); // why?
                             break;
 
                         case "furniture_present":
@@ -116,8 +127,6 @@ namespace RoomExfiltrator
                             for (var i2 = 0; i2 < paramsCount; i2++)
                             {
                                 furniItem.extradata += $"{e.Packet.ReadString()}={e.Packet.ReadString().Replace("images.habbo.com", "client.habbent.pw")};";
-
-                                //LogText($"{e.Packet.ReadString()}: {e.Packet.ReadString()}");
                             }
                             break;
 
@@ -145,11 +154,9 @@ namespace RoomExfiltrator
 
                     var something2 = e.Packet.ReadInteger();
                     var canChangeState = e.Packet.ReadInteger();
-                    var ownerId = e.Packet.ReadInteger();
+                    furniItem.originalOwnerId = e.Packet.ReadInteger();
 
-                    LogText("");
-
-                    //LogText($"{something2} - {canChangeState} - {ownerId}");
+                    LogText(furniItem.ToString());
                 }
             }
             catch (Exception ex)
@@ -164,7 +171,7 @@ namespace RoomExfiltrator
         {
             if (chkSqlOnly.Checked && sql)
                 txtFurni.Text += $"{t}\r\n";
-            if (!chkSqlOnly.Checked)
+            if (!chkSqlOnly.Checked && !sql)
                 txtFurni.Text += $"{t}\r\n";
         }
     }
@@ -178,12 +185,28 @@ namespace RoomExfiltrator
         public string height { get; set; }
         public int rot { get; set; }
         public string extradata = "";
+        public int originalOwnerId { get; set; }
         public string ownerId { get; set; }
         public string roomId { get; set; }
+        public string interactionType { get; set; }
+        public int id { get; set; }
 
         public string ToQuery()
         {
             return $"INSERT INTO items (user_id, room_id, item_id, x, y, z, rot, extra_data) VALUES ('{ownerId}', '{roomId}', (SELECT id FROM items_base WHERE sprite_id = '{baseId}'), '{x}', '{y}', '{height}', '{rot}', '{extradata}');";
+        }
+
+        public override string ToString()
+        {
+            return $"Furni ID: {id}\r\n" +
+                $"Base ID: {baseId}\r\n" +
+                $"X: {x}\r\n" +
+                $"Y: {y}\r\n" +
+                $"Height: {height}\r\n" +
+                $"Rotation: {rot}\r\n" +
+                $"Extradata: {extradata}\r\n" +
+                $"Interaction Type: {interactionType}\r\n" +
+                $"Owner Id: {originalOwnerId}\r\n";
         }
     }
 }
