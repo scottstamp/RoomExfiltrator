@@ -80,6 +80,8 @@
             // chkSqlOnly
             // 
             this.chkSqlOnly.AutoSize = true;
+            this.chkSqlOnly.Checked = true;
+            this.chkSqlOnly.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSqlOnly.Location = new System.Drawing.Point(225, 14);
             this.chkSqlOnly.Name = "chkSqlOnly";
             this.chkSqlOnly.Size = new System.Drawing.Size(71, 17);
