@@ -24,7 +24,7 @@ namespace RoomExfiltrator
         public frmMain()
         {
             InitializeComponent();
-            var lines = File.ReadAllLines(@"C:\users\scott\documents\habbent\interactiontypes.txt");
+            var lines = File.ReadAllLines(@"C:\interactiontypes.txt");
             foreach (var line in lines)
             {
                 var baseId = int.Parse(line.Split(':')[1]);
@@ -99,6 +99,7 @@ namespace RoomExfiltrator
                             break;
                         case "furniture_change_state_when_step_on":
                         case "furniture_basic":
+                        case "furniture_trophy":
                         case "furniture_multistate":
                         case "furniture_multiheight":
                         case "furniture_internal_link":
@@ -109,6 +110,7 @@ namespace RoomExfiltrator
                         case "furniture_mannequin":
                         case "furniture_youtube":
                         case "furniture_bg":
+                        case "furniture_bb":
                         case "furniture_monsterplant_seed":
                             var paramsCount = e.Packet.ReadInteger(); // parameter count
                             for (var i2 = 0; i2 < paramsCount; i2++)
