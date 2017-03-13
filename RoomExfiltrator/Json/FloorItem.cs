@@ -12,51 +12,51 @@ namespace RoomExfiltrator.Json
     {
         //LogText($"INSERT INTO items (user_id, room_id, item_id, x, y, z, rot) VALUES ('8', '90', '{baseId}', '{x}', '{y}', '{height}', '{rot}');");
         private int _baseId;
-        [DataMember]
+        [DataMember(Name = "base_id")]
         public int BaseId { get => _baseId; set => _baseId = value; }
 
         private int _x;
-        [DataMember]
+        [DataMember(Name = "x")]
         public int X { get => _x; set => _x = value; }
 
         private int _y;
-        [DataMember]
+        [DataMember(Name = "y")]
         public int Y { get => _y; set => _y = value; }
 
         private string _height;
-        [DataMember]
+        [DataMember(Name = "height")]
         public string Height { get => _height; set => _height = value; }
 
         private int _rotation;
-        [DataMember]
+        [DataMember(Name = "rotation")]
         public int Rotation { get => _rotation; set => _rotation = value; }
 
         private string _extradata = "";
-        [DataMember]
+        [DataMember(Name = "extradata")]
         public string Extradata { get => _extradata; set => _extradata = value; }
 
         private int _originalOwnerId;
-        //[DataMember]
+        //[DataMember(Name = "original_owner_id")]
         public int OriginalOwnerId { get => _originalOwnerId; set => _originalOwnerId = value; }
 
         private string _ownerId;
-        [DataMember]
+        [DataMember(Name = "owner_id")]
         public string OwnerId { get => _ownerId; set => _ownerId = value; }
 
         private string _roomId;
-        [DataMember]
+        [DataMember(Name = "room_id")]
         public string RoomId { get => _roomId; set => _roomId = value; }
 
         private string _interactionType;
-        [DataMember]
+        [DataMember(Name = "interaction_type")]
         public string InteractionType { get => _interactionType; set => _interactionType = value; }
 
         private int _id;
-        //[DataMember]
+        //[DataMember(Name = "id")]
         public int Id { get => _id; set => _id = value; }
 
         private string _itemName;
-        [DataMember]
+        [DataMember(Name = "item_name")]
         public string ItemName { get => _itemName; set => _itemName = value; }
 
         public string ToQuery()

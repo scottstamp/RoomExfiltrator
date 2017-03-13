@@ -33,7 +33,7 @@
             this.txtRoomId = new System.Windows.Forms.TextBox();
             this.lblOwnerId = new System.Windows.Forms.Label();
             this.lblRoomId = new System.Windows.Forms.Label();
-            this.chkSqlOnly = new System.Windows.Forms.CheckBox();
+            this.chkJsonOnly = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // txtFurni
@@ -77,24 +77,24 @@
             this.lblRoomId.TabIndex = 4;
             this.lblRoomId.Text = "Room ID:";
             // 
-            // chkSqlOnly
+            // chkJsonOnly
             // 
-            this.chkSqlOnly.AutoSize = true;
-            this.chkSqlOnly.Checked = true;
-            this.chkSqlOnly.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSqlOnly.Location = new System.Drawing.Point(225, 14);
-            this.chkSqlOnly.Name = "chkSqlOnly";
-            this.chkSqlOnly.Size = new System.Drawing.Size(71, 17);
-            this.chkSqlOnly.TabIndex = 5;
-            this.chkSqlOnly.Text = "SQL Only";
-            this.chkSqlOnly.UseVisualStyleBackColor = true;
+            this.chkJsonOnly.AutoSize = true;
+            this.chkJsonOnly.Checked = true;
+            this.chkJsonOnly.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkJsonOnly.Location = new System.Drawing.Point(225, 14);
+            this.chkJsonOnly.Name = "chkJsonOnly";
+            this.chkJsonOnly.Size = new System.Drawing.Size(78, 17);
+            this.chkJsonOnly.TabIndex = 5;
+            this.chkJsonOnly.Text = "JSON Only";
+            this.chkJsonOnly.UseVisualStyleBackColor = true;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 423);
-            this.Controls.Add(this.chkSqlOnly);
+            this.Controls.Add(this.chkJsonOnly);
             this.Controls.Add(this.lblRoomId);
             this.Controls.Add(this.lblOwnerId);
             this.Controls.Add(this.txtRoomId);
@@ -115,7 +115,7 @@
         private System.Windows.Forms.TextBox txtRoomId;
         private System.Windows.Forms.Label lblOwnerId;
         private System.Windows.Forms.Label lblRoomId;
-        private System.Windows.Forms.CheckBox chkSqlOnly;
+        private System.Windows.Forms.CheckBox chkJsonOnly;
     }
 }
 

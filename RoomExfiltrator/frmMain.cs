@@ -54,10 +54,90 @@ namespace RoomExfiltrator
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            Triggers.InAttach(448, ParseFloorItems);
-            Triggers.InAttach(1810, ParseWallItems);
-            Triggers.InAttach(1015, ParseHeightmap);
-            Triggers.InAttach(20, ParseRoomPaint);
+            var wallItems = Game.GetHeader("a7f0ca597403c539084a75b096294081");
+            var floorItems = Game.GetHeader("540de3e1e0baf1632ce3107fc99780f4");
+            var roomData = Game.GetHeader("337d349ac5811943f3beb10273262f94");
+            var heightmap = Game.GetHeader("28b93d64f5126a5b304f088c384c974e");
+            var roomPaint = Game.GetHeader("b76f0244225ff8de48e8fb34d49d1663");
+            var roomModel = Game.GetHeader("6baee118ced0e46a3ca5384b83e6338c");
+
+            Triggers.InAttach(roomData, ParseRoomData);
+            Triggers.InAttach(roomModel, ParseRoomModel);
+            Triggers.InAttach(floorItems, ParseFloorItems);
+            Triggers.InAttach(wallItems, ParseWallItems);
+            Triggers.InAttach(heightmap, ParseHeightmap);
+            Triggers.InAttach(roomPaint, ParseRoomPaint);
+        }
+
+        private void ParseRoomData(DataInterceptedEventArgs e)
+        {
+            //int mask = 8 | 16;
+
+            e.Packet.ReadBoolean(); // ??
+            e.Packet.ReadInteger(); // original room ID
+            var name = e.Packet.ReadString(); // original room name
+            e.Packet.ReadInteger(); // original room owner ID
+            e.Packet.ReadString(); // original room owner name
+            var state = e.Packet.ReadInteger(); // room state (open, locked, password, invisible)
+            e.Packet.ReadInteger(); // user count
+            var maxUsers = e.Packet.ReadInteger(); // user max
+            var description = e.Packet.ReadString(); // room description
+            e.Packet.ReadInteger(); // ??
+            e.Packet.ReadInteger(); // ??
+            var score = e.Packet.ReadInteger(); // room score
+            var category = e.Packet.ReadInteger(); // room category
+            var tagCount = e.Packet.ReadInteger(); // room tag count
+            var tags = new List<string>();
+            for (var i = 0; i < tagCount; i++)
+                tags.Add(e.Packet.ReadString()); // room tag
+
+            // we don't really need to care about the rest of the packet
+
+            /*var roomType = e.Packet.ReadInteger(); // room type
+
+            if (roomType == (mask | 2)) // group room
+            {
+                e.Packet.ReadInteger(); // group id
+                e.Packet.ReadString(); // group name
+                e.Packet.ReadString(); // group badge
+            }
+
+            if (roomType == (mask | 4)) // promoted room
+            {
+                e.Packet.ReadString(); // promo title
+                e.Packet.ReadString(); // promo description
+                e.Packet.ReadInteger(); // promo time remaining
+            }
+
+            e.Packet.ReadBoolean(); // is public room
+            e.Packet.ReadBoolean(); // is staff promoted
+            e.Packet.ReadBoolean(); // is public room again?
+            e.Packet.ReadBoolean(); // is room muted
+
+            e.Packet.ReadInteger(); // mute option
+            e.Packet.ReadInteger(); // kick option
+            e.Packet.ReadInteger(); // ban option
+
+            e.Packet.ReadBoolean(); // mute all button
+
+            e.Packet.ReadInteger(); // chat mode
+            e.Packet.ReadInteger(); // chat weight
+            e.Packet.ReadInteger(); // chat speed
+            e.Packet.ReadInteger(); // chat distance
+            e.Packet.ReadInteger(); // chat protection?*/
+            
+            room.RoomInfo.Name = name;
+            room.RoomInfo.State = state;
+            room.RoomInfo.MaxUsers = maxUsers;
+            room.RoomInfo.Description = description;
+            room.RoomInfo.Score = score;
+            room.RoomInfo.Category = category;
+            room.RoomInfo.Tags = tags;
+        }
+
+        private void ParseRoomModel(DataInterceptedEventArgs e)
+        {
+            room.Heightmap.Model = e.Packet.ReadString();
         }
 
         private void ParseHeightmap(DataInterceptedEventArgs e)
@@ -122,6 +202,7 @@ namespace RoomExfiltrator
 
         private void ParseFloorItems(DataInterceptedEventArgs e)
         {
+
             Invoke((MethodInvoker)delegate { txtFurni.Text = ""; });
             LogText("---------------------------------------");
             var ownersCount = e.Packet.ReadInteger();
@@ -164,9 +245,9 @@ namespace RoomExfiltrator
                 furniItem.ItemName = floorItem.Item1;
                 furniItem.InteractionType = floorItem.Item3;
 
-                //LogText($"Interaction Type: {floorItem.Item3}");
-
                 e.Packet.ReadInteger(); // nobody has a fucking clue what this is for apparently
+
+                // this should be a mask, but w/e, we don't care about the value (see above)
                 bool isLimited = (e.Packet.ReadInteger() - 256 > -1);
 
                 switch (floorItem.Item3)
@@ -189,6 +270,7 @@ namespace RoomExfiltrator
                     case "furniture_custom_stack_height":
                     case "furniture_pushable":
                     case "furniture_one_way_door":
+                    case "furniture_jukebox":
                         furniItem.Extradata = e.Packet.ReadString(); // extraData
                         break;
 
@@ -225,8 +307,6 @@ namespace RoomExfiltrator
                         break;
                 }
 
-                //LogText(furniItem.ToQuery(), true);
-
                 if (isLimited)
                 {
                     var limitedNo = e.Packet.ReadInteger();
@@ -247,9 +327,9 @@ namespace RoomExfiltrator
 
         private void LogText(object t, bool sql)
         {
-            if (chkSqlOnly.Checked && sql)
+            if (chkJsonOnly.Checked && sql)
                 Invoke((MethodInvoker)delegate { txtFurni.Text += $"{t}\r\n"; });
-            if (!chkSqlOnly.Checked && !sql)
+            if (!chkJsonOnly.Checked && !sql)
                 Invoke((MethodInvoker)delegate { txtFurni.Text += $"{t}\r\n"; });
         }
     }

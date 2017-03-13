@@ -65,6 +65,7 @@
     <Compile Include="Json\FloorItem.cs" />
     <Compile Include="Json\Heightmap.cs" />
     <Compile Include="Json\Paint.cs" />
+    <Compile Include="Json\RoomInfo.cs" />
     <Compile Include="Json\WallItem.cs" />
     <Compile Include="Parsers\BackgroundToner.cs" />
     <Compile Include="Program.cs" />

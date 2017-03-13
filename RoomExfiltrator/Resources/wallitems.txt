@@ -1,3 +1,4 @@
+poster:4001:furniture_basic
 ads_nokiax3_wall:4526:furniture_multistate
 ads_nokiax3_wallb:4525:furniture_multistate
 brnd_cscape_wall:4524:furniture_multistate

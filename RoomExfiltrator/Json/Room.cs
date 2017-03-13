@@ -12,12 +12,16 @@ namespace RoomExfiltrator.Json
         private static readonly DataContractJsonSerializer _serializer;
 
         private string _userId = "0";
-        [DataMember(Name = "ownerId", Order = 0)]
+        [DataMember(Name = "owner_id", Order = 0)]
         internal string OwnerId { get => _userId; set => _userId = value; }
 
         private string _roomId = "0";
-        [DataMember(Name = "roomId", Order = 1)]
+        [DataMember(Name = "room_id", Order = 1)]
         internal string RoomId { get => _roomId; set => _roomId = value; }
+
+        private RoomInfo _roomInfo = new RoomInfo();
+        [DataMember(Name ="room_info", Order = 2)]
+        internal RoomInfo RoomInfo { get => _roomInfo; set => _roomInfo = value; }
 
         private Heightmap _heightmap = new Heightmap();
         [DataMember(Name = "heightmap", Order = 2)]
