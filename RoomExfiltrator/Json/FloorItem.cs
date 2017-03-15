@@ -12,7 +12,7 @@ namespace RoomExfiltrator.Json
     {
         //LogText($"INSERT INTO items (user_id, room_id, item_id, x, y, z, rot) VALUES ('8', '90', '{baseId}', '{x}', '{y}', '{height}', '{rot}');");
         private int _baseId;
-        [DataMember(Name = "base_id")]
+        //[DataMember(Name = "base_id")]
         public int BaseId { get => _baseId; set => _baseId = value; }
 
         private int _x;
@@ -40,15 +40,15 @@ namespace RoomExfiltrator.Json
         public int OriginalOwnerId { get => _originalOwnerId; set => _originalOwnerId = value; }
 
         private string _ownerId;
-        [DataMember(Name = "owner_id")]
+        //[DataMember(Name = "owner_id")]
         public string OwnerId { get => _ownerId; set => _ownerId = value; }
 
         private string _roomId;
-        [DataMember(Name = "room_id")]
+        //[DataMember(Name = "room_id")]
         public string RoomId { get => _roomId; set => _roomId = value; }
 
         private string _interactionType;
-        [DataMember(Name = "interaction_type")]
+        //[DataMember(Name = "interaction_type")]
         public string InteractionType { get => _interactionType; set => _interactionType = value; }
 
         private int _id;

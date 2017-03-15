@@ -52,5 +52,19 @@ namespace RoomExfiltrator.Json
                 return Encoding.UTF8.GetString(jsonStream.ToArray());
             }
         }
+
+        public string ToQuery()
+        {
+            var roomQuery = "INSERT INTO rooms (owner_id, name, description, model, users_max, paper_floor, paper_wall, paper_landscape, wall_height, tags) VALUES " +
+                $"({OwnerId}, '{RoomInfo.Name}', '{RoomInfo.Description}', '{Heightmap.Model}', {RoomInfo.MaxUsers}, '{Paint.Floor}', '{Paint.Wallpaper}', {Paint.Landscape}, " +
+                $"{Heightmap.WallHeight}, '{System.String.Join(";", RoomInfo.Tags)}');";
+
+            foreach (var floorItem in FloorItems)
+            {
+
+            }
+
+            return "";
+        }
     }
 }

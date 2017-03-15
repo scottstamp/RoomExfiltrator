@@ -197,7 +197,7 @@ namespace RoomExfiltrator
                 e.Packet.ReadInteger(); // ?
             }
 
-            LogText(JsonHelper.FormatJson(room.ToJson()), true);
+            LogText(room.ToJson(), true);
             room = new Room();
         }
 
@@ -260,10 +260,17 @@ namespace RoomExfiltrator
 
                 switch (floorItem.Item3)
                 {
+                    // _SafeStr_3703 {String, result = Int}
+                    // _SafeStr_4710 {} (no data, weird)
+
+
+                    // IntArrayStuffData (what the hell was the dev team smoking when they named these?)
                     case "furniture_background_color":
                         var colorsCount = e.Packet.ReadInteger();
                         for (var i2 = 0; i2 < colorsCount; i2++) furniItem.Extradata += $"{e.Packet.ReadInteger()}:";
                         break;
+
+                    // _SafeStr_2428
                     case "furniture_change_state_when_step_on":
                     case "furniture_basic":
                     case "furniture_trophy":
@@ -287,6 +294,7 @@ namespace RoomExfiltrator
                         furniItem.Extradata = e.Packet.ReadString(); // extraData
                         break;
 
+                    // HighScoreStuffData
                     case "furniture_high_score":
                         e.Packet.ReadString(); // "1"
                         e.Packet.ReadInteger(); // 1
@@ -303,6 +311,7 @@ namespace RoomExfiltrator
                         }
                         break;
 
+                    // MapStuffData
                     case "furniture_present":
                     case "furniture_mannequin":
                     case "furniture_youtube":
@@ -316,6 +325,7 @@ namespace RoomExfiltrator
                         }
                         break;
 
+                    // StringArrayStuffData
                     case "furniture_lovelock":
                     case "furniture_hween_lovelock":
                     case "furniture_badge_display":
@@ -329,6 +339,7 @@ namespace RoomExfiltrator
                         }
                         break;
 
+                    // _SafeStr_4711
                     case "furniture_crackable":
                         e.Packet.ReadString();
                         e.Packet.ReadInteger();
@@ -347,6 +358,7 @@ namespace RoomExfiltrator
                 furniItem.OriginalOwnerId = e.Packet.ReadInteger();
 
                 room.FloorItems.Add(furniItem);
+                //LogText(furniItem.ToString(), true);
             }
 
             

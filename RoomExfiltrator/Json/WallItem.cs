@@ -17,7 +17,7 @@ namespace RoomExfiltrator.Json
         private string _userId;
         private int _state;
 
-        [DataMember(Name = "sprite_id")]
+        //[DataMember(Name = "sprite_id")]
         public int SpriteId { get => _spriteId; set => _spriteId = value; }
         [DataMember(Name = "sprite_name")]
         public string SpriteName { get => _spriteName; set => _spriteName = value; }
